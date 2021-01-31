@@ -2,6 +2,7 @@ import java.util.{Locale, Scanner}
 
 
 object Main extends App{
+  val size : Int = 10
 
   Locale.setDefault(Locale.US)
   val s : Scanner = new Scanner(System.in)
@@ -10,9 +11,9 @@ object Main extends App{
   val P : Array[Point] = Array.tabulate[Point](n)(_ => Point(s.nextDouble(), s.nextDouble()))
 
   val k : Int = s.nextInt()
-  val R : Array[Rect] = Array.tabulate[Rect](k)(_ => Rect(Point(s.nextDouble(), s.nextDouble()), Point(s.nextDouble(), s.nextDouble())))
+  val R : Array[Rect] = Array.tabulate[Rect](k)(_ => Rect(s.nextDouble(), s.nextDouble(), s.nextDouble(), s.nextDouble()))
 
-  val Grid = Array.tabulate[Seq[Point]](200, 200)((_, _) => Seq())
+  val Grid = Array.tabulate[Seq[Point]](2 * 1000 / size, 2 * 1000 / size)((_, _) => Seq())
 
   BuildGrid()
 
@@ -23,7 +24,7 @@ object Main extends App{
 
 
 
-  def GetIndex(a : Double): Int = (a/10).toInt + (if(a < 0) -1 else 0) + 100
+  def GetIndex(a : Double): Int = (a/size).toInt + (if(a < 0) -1 else 0) + 1000 / size
 
   def BuildGrid(): Unit ={
     for (i <- P.indices){
@@ -41,14 +42,14 @@ object Main extends App{
 
   def GetNumberOfPoints(r : Rect): Int ={
     var n : Int = 0
-    val leftIndex = GetIndex(r.P1.x)
-    val rightIndex = GetIndex(r.P2.x)
-    val lowerIndex = GetIndex(r.P1.y)
-    val upperIndex = GetIndex(r.P2.y)
+    val leftIndex = GetIndex(r.x1)
+    val rightIndex = GetIndex(r.x2)
+    val lowerIndex = GetIndex(r.y1)
+    val upperIndex = GetIndex(r.y2)
     for (i <- leftIndex to rightIndex){
       for (j <- lowerIndex to upperIndex){
         if (i == leftIndex || i == rightIndex || j == lowerIndex || j == upperIndex){
-          n += CountPoints(Grid(i)(j), r.P1.x, r.P2.x, r.P1.y, r.P2.y)
+          n += CountPoints(Grid(i)(j), r.x1, r.x2, r.y1, r.y2)
         }else{
           n += Grid(i)(j).length
         }
@@ -60,5 +61,5 @@ object Main extends App{
   //////////////
   case class Point(x : Double, y : Double)
 
-  case class Rect(P1 : Point, P2 : Point)
+  case class Rect(x1 : Double, y1 : Double, x2 : Double, y2 : Double)
 }
